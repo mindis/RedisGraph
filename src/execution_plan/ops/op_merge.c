@@ -138,9 +138,15 @@ static void _CommitEdges(OpMerge *op) {
 }
 
 static void _CreateEntities(OpMerge *op) {
+    // Lock everything.
+    Graph_AcquireWriteLock(op->gc->g);
+
     // Commit query graph and set resultset statistics.
     _CommitNodes(op);
     _CommitEdges(op);
+
+    // Release lock.
+    Graph_ReleaseLock(op->gc->g);
 }
 
 OpBase* NewMergeOp(GraphContext *gc, AST *ast, QueryGraph *qg, ResultSet *result_set) {
